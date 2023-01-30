@@ -106,3 +106,5 @@ dist
 # Private  files
 token-handling.js
 package-lock.json
+
+*.chatgpt-io.json
