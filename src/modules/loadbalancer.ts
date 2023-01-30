@@ -1,12 +1,14 @@
-import ms from "ms";
-import supabase from "./supabase.js";
-import delay from "delay";
-var clients = [];
-import { Configuration, OpenAIApi } from "openai";
 import ChatGPT, { LogLevel } from "chatgpt-io";
+import ms from "ms";
+import { Configuration, OpenAIApi } from "openai";
+import supabase from "./supabase.js";
+var clients = [];
 
 async function getTokens() {
   let { data: accounts, error } = await supabase.from("accounts").select("*");
+
+  console.log({ accounts });
+
   if (error) {
     return null;
   }
@@ -89,7 +91,7 @@ async function useToken(retry, shard) {
   var tokens = await getTokens();
   if (!tokens || tokens.length <= 0) {
     return {
-      error: `We are reaching our capacity limits right now please wait 1-2 minutes. \nFor more information join our discord: [dsc.gg/turing](https://dsc.gg/turing)`,
+      error: `We are reaching our capacity limits right now please wait 1-2 minutes. `,
     };
   } else {
     var t = tokens
@@ -107,15 +109,18 @@ async function useToken(retry, shard) {
       });
     var i = getRndInteger(0, t.length - 1);
 
-    if (clients.length <= 2) {
-      return {
-        error:
-          "Wait 1-2 mins the bot is starting or we are reaching our capacity limits.\nFor more information join our discord: [dsc.gg/turing](https://dsc.gg/turing)",
-      };
-    }
+    // if (clients.length <= 2) {
+    //   console.log("clients.length", clients.length);
+    //   return {
+    //     error:
+    //       "Wait 1-2 mins the bot is starting or we are reaching our capacity limits.",
+    //   };
+    // }
     if (t.length <= 0) {
+      console.log("t.length", t.length);
+
       return {
-        error: `We are reaching our capacity limits right now please wait 1-2 minutes. \nFor more information join our discord: [dsc.gg/turing](https://dsc.gg/turing)`,
+        error: `We are reaching our capacity limits right now please wait 1-2 minutes. `,
       };
     }
     var token = t[i];
@@ -132,7 +137,7 @@ async function useToken(retry, shard) {
       return client;
     } else {
       return {
-        error: `We are reaching our capacity limits right now please wait 1-2 minutes. \nFor more information join our discord: [dsc.gg/turing](https://dsc.gg/turing)`,
+        error: `We are reaching our capacity limits right now please wait 1-2 minutes. `,
       };
     }
   }
@@ -215,12 +220,12 @@ export async function resetto0() {
 }
 
 async function initTokens(shard) {
-  console.log((shard - 1) * 5, shard * 5, shard);
+  console.log("initTokens: ", (shard - 1) * 5, shard * 5, shard);
   let { data: tokens, error } = await supabase
     .from("accounts")
     .select("*")
-    .range((shard - 1) * 5, shard * 5)
-    .eq("lastUse", null);
+    .range((shard - 1) * 5, shard * 5);
+
   var max = tokens.length;
   for (var i = 0; i < max; i++) {
     var token = tokens[i];

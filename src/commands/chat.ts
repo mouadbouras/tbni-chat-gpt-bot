@@ -1,14 +1,10 @@
-import {
-  SlashCommandBuilder,
-  EmbedBuilder,
-  AttachmentBuilder,
-} from "discord.js";
-import { chat, conversationFn } from "../modules/gpt-api.js";
-import supabase from "../modules/supabase.js";
-import { renderResponse } from "../modules/render-response.js";
+import { AttachmentBuilder, SlashCommandBuilder } from "discord.js";
 import { v4 as uuidv4 } from "uuid";
-import { useToken, getAbleTokens } from "../modules/loadbalancer.js";
 import { checkIsTuring } from "../modules/features.js";
+import { chat, conversationFn } from "../modules/gpt-api.js";
+import { getAbleTokens, useToken } from "../modules/loadbalancer.js";
+import { renderResponse } from "../modules/render-response.js";
+import supabase from "../modules/supabase.js";
 
 export default {
   cooldown: "1m",
@@ -65,7 +61,7 @@ export default {
         // Filters
         .eq("prompt", message.toLowerCase())
         .eq("provider", "chatgpt");
-      console.log(error);
+      console.log("error 1", error, results);
       if (!results || error) {
         var errr = "Error connecting with db";
         if (responseType == "image") {
@@ -249,7 +245,7 @@ async function responseWithImage(interaction, prompt, result, type) {
       files: [image],
     });
   } catch (err) {
-    console.log(err);
+    console.log("error 2", err);
   }
 }
 
@@ -265,7 +261,7 @@ async function responseWithText(interaction, prompt, result, channel, type) {
             completeResponse.split("").slice(0, 2000).join("")
           );
         } catch (err) {
-          console.log(err);
+          console.log("error 3", err);
         }
       } else {
         channel.send(

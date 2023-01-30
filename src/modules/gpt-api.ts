@@ -1,15 +1,12 @@
 //import { chatgptToken } from "chatgpt-token/module";
 import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
-dotenv.config();
-import chalk from "chalk";
 import {
-  useToken,
-  addMessage,
   getToken,
-  removeMessage,
   rateLimitAcc,
+  removeMessage,
+  useToken,
 } from "./loadbalancer.js";
-import { Configuration, OpenAIApi } from "openai";
+dotenv.config();
 
 var abled = false;
 
@@ -19,10 +16,10 @@ async function getStatus() {
 
 async function chat(message, shard) {
   var token = await useToken(0, shard);
-
+  console.log({ token });
   if (!token) {
     return {
-      error: `We are reaching our capacity limits right now please wait 1-2 minutes. \nFor more information join our discord: [dsc.gg/turing](https://dsc.gg/turing)`,
+      error: `We are reaching our capacity limits right now please wait 1-2 minutes. `,
     };
   }
   if (token.error) {
@@ -67,7 +64,7 @@ export async function conversationFn(message, conversationId, accId) {
 
   if (!token) {
     return {
-      error: `We are reaching our capacity limits right now please wait 1-2 minutes. \nFor more information join our discord: [dsc.gg/turing](https://dsc.gg/turing)`,
+      error: `We are reaching our capacity limits right now please wait 1-2 minutes. `,
     };
   }
   if (token.error) {
